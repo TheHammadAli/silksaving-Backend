@@ -17,7 +17,9 @@ router.post('/checkout', async (req, res) => {
 
     const stripe = await getUncachableStripeClient();
 
-    const host = `${req.protocol}://${req.get('host')}`;
+    // Trusting req.get('host') breaks behind a proxy (e.g. Vercel's /api rewrite),
+    // since it reflects the backend's own host, not the public-facing frontend.
+    const host = process.env.FRONTEND_URL ?? `${req.protocol}://${req.get('host')}`;
     const successUrl = `${host}/?checkout=success&product=${encodeURIComponent(productName)}`;
     const cancelUrl = `${host}/products/${productHandle}`;
 
