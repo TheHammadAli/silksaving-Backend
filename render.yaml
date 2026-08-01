@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: silksavings-api
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && corepack prepare pnpm@11.18.0 --activate && pnpm install && pnpm run build
+    startCommand: pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
