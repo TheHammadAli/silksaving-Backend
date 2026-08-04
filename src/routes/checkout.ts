@@ -39,6 +39,11 @@ router.post('/checkout', async (req, res) => {
       // DB not ready yet — fall through to price_data
     }
 
+    // Same free-shipping-over-$35 rule shown in the cart UI (Cart.tsx), applied
+    // to this session's line total since each checkout is for a single product.
+    const lineTotal = Number(productPrice) * qty;
+    const shippingCents = lineTotal >= 35 ? 0 : 499;
+
     if (!lineItem) {
       // Fallback: use price_data (works before seeding)
       lineItem = {
@@ -69,6 +74,15 @@ router.post('/checkout', async (req, res) => {
           'AE', 'SA', 'PK', 'IN', 'MY', 'SG', 'PH',
         ],
       },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: { amount: shippingCents, currency: 'usd' },
+            display_name: shippingCents === 0 ? 'Free shipping' : 'Standard shipping',
+          },
+        },
+      ],
       metadata: { productHandle },
     });
 
