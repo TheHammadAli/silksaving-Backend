@@ -60,10 +60,31 @@ async function getCredentials(): Promise<{ publishableKey: string; secretKey: st
   };
 }
 
-// WARNING: Never cache this client — tokens can rotate.
-export async function getUncachableStripeClient(): Promise<Stripe> {
+// Cached client for static STRIPE_SECRET_KEY (env var path — key never rotates).
+// We intentionally do NOT cache when using Replit Connectors, because those
+// tokens can rotate and must be fetched fresh on every request.
+let _cachedStripeClient: Stripe | null = null;
+
+export async function getStripeClient(): Promise<Stripe> {
+  // If using the env var path, reuse a single cached client.
+  if (process.env.STRIPE_SECRET_KEY) {
+    if (!_cachedStripeClient) {
+      _cachedStripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2025-08-27.basil' as any,
+      });
+    }
+    return _cachedStripeClient;
+  }
+
+  // Replit Connectors path: tokens can rotate, so always fetch fresh.
   const { secretKey } = await getCredentials();
   return new Stripe(secretKey, { apiVersion: '2025-08-27.basil' as any });
+}
+
+// Kept for backward compat (webhookHandlers.ts uses it).
+// WARNING: Never cache this client when using Replit Connectors — tokens can rotate.
+export async function getUncachableStripeClient(): Promise<Stripe> {
+  return getStripeClient();
 }
 
 export async function getStripePublishableKey(): Promise<string> {

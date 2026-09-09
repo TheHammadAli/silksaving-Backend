@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUncachableStripeClient } from '../stripeClient';
+import { getStripeClient } from '../stripeClient';
 import { storage } from '../storage';
 
 const router = Router();
@@ -15,7 +15,12 @@ router.post('/checkout', async (req, res) => {
 
     const qty = Math.max(1, Math.round(Number(quantity) || 1));
 
-    const stripe = await getUncachableStripeClient();
+    // Kick off Stripe client init and DB product lookup in parallel — they are
+    // independent so there's no reason to wait for one before starting the other.
+    const [stripe, dbRows] = await Promise.all([
+      getStripeClient(),
+      storage.listProductsWithPrices().catch(() => [] as any[]),
+    ]);
 
     // Trusting req.get('host') breaks behind a proxy (e.g. Vercel's /api rewrite),
     // since it reflects the backend's own host, not the public-facing frontend.
@@ -27,16 +32,11 @@ router.post('/checkout', async (req, res) => {
     // If found, use its real price_id for cleaner reporting; otherwise use price_data
     let lineItem: any;
 
-    try {
-      const rows = await storage.listProductsWithPrices();
-      const match = rows.find((r: any) =>
-        r.product_metadata?.handle === productHandle && r.price_id
-      );
-      if (match) {
-        lineItem = { price: match.price_id, quantity: qty };
-      }
-    } catch (_) {
-      // DB not ready yet — fall through to price_data
+    const match = (dbRows as any[]).find((r: any) =>
+      r.product_metadata?.handle === productHandle && r.price_id
+    );
+    if (match) {
+      lineItem = { price: match.price_id, quantity: qty };
     }
 
     // Same free-shipping-over-$35 rule shown in the cart UI (Cart.tsx), applied
