@@ -44,6 +44,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+// ── Health check — for uptime pingers (UptimeRobot, cron-job.org) to keep the
+// free Render instance from spinning down after 15 min of inactivity ──
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // ── Sitemap & robots — served with correct Content-Type ──
 app.get('/sitemap.xml', (_req, res) => {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
