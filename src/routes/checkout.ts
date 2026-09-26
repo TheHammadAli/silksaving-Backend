@@ -76,8 +76,8 @@ router.post('/checkout', async (req, res) => {
         {
           shipping_rate_data: {
             type: 'fixed_amount',
-            fixed_amount: { amount: shippingCents, currency: 'usd' },
-            display_name: shippingCents === 0 ? 'Free shipping' : 'Standard shipping',
+            fixed_amount: { amount: 0, currency: 'usd' },
+            display_name: 'Free shipping',
           },
         },
       ],
