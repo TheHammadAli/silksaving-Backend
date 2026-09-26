@@ -39,10 +39,8 @@ router.post('/checkout', async (req, res) => {
       lineItem = { price: match.price_id, quantity: qty };
     }
 
-    // Same free-shipping-over-$35 rule shown in the cart UI (Cart.tsx), applied
-    // to this session's line total since each checkout is for a single product.
-    const lineTotal = Number(productPrice) * qty;
-    const shippingCents = lineTotal >= 35 ? 0 : 499;
+    // Free shipping on all orders
+    const shippingCents = 0;
 
     if (!lineItem) {
       // Fallback: use price_data (works before seeding)
