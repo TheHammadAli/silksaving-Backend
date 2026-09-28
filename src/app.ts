@@ -62,8 +62,8 @@ app.get('/sitemap.xml', (_req, res) => {
   <url><loc>https://www.silksavings.shop/returns</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.silksavings.shop/privacy</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.silksavings.shop/products/dried-calendula-flowers</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.silksavings.shop/products/bitter-apricot-seeds-8oz</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.silksavings.shop/products/bitter-apricot-seeds-1lb</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.silksavings.shop/products/bitter-apricot-kernels-8oz</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.silksavings.shop/products/bitter-apricot-kernels-1lb</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.silksavings.shop/products/dried-rose-petals</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.silksavings.shop/products/dried-yarrow-herb</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.silksavings.shop/products/dried-lemon-grass</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
